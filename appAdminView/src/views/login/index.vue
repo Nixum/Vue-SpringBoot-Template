@@ -66,8 +66,8 @@ export default {
     return {
       loading: false,
       loginForm: {
-        usernameOrEmail: 'admin',
-        password: 'admin123'
+        usernameOrEmail: '',
+        password: ''
       },
       loginRules: {
         usernameOrEmail: [{ required: true, trigger: 'blur', validator: validateUsernameOrEmail }],
@@ -94,7 +94,7 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', user).then(() => {
             this.loading = false
-            this.$router.push({ path: '/user' })
+            this.$router.push({ path: '/user' }) // 跳转
           })
         }
       })

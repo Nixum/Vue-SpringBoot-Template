@@ -48,6 +48,7 @@ const user = {
     // 登录
     Login({ commit }, loginForm) {
       return new Promise((resolve, reject) => {
+        // 调用api/user.js的login方法
         login(loginForm).then(response => {
           if (response.code === 200) {
             // cookie中保存token

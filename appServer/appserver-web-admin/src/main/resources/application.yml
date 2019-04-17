@@ -1,0 +1,52 @@
+# 所有环境通用的配置，放在这里
+spring:
+  profiles:
+    active: dev
+  mvc:
+    # 异常处理, 当出现 404 错误时, 直接抛出异常, 而默认是显示一个错误页面
+    throwExceptionIfNoHandlerFound: true
+    # 不映射工程中的静态资源文件
+    resources:
+      addMappings: false
+    # 检查终端是否支持ANSI，是的话就采用彩色输出
+    output:
+      ansi:
+        enabled: ALWAYS
+    favicon:
+      enabled: false
+
+# jasypt配置对称加密, password为盐值，自己定制，
+#之后编写测试用例得到加密后的字符串，在配置文件中以ENC(加密后字符串)格式填写
+jasypt:
+  encryptor:
+    password: nixum
+
+# mybatis
+mybatis:
+  typeAliasesPackage: com.nixum.model.model
+  mapperLocations: classpath:mapper/**/*.xml
+
+# mapper
+mapper:
+  mappers: com.nixum.common.dao.NewBaseMapper
+  notEmpty: false
+  identity: MYSQL
+
+# pagehelper, pageSize=0时查出所以结果
+pagehelper:
+  pageSizeZero: true
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# Json web token 过期时间24*3600=1天
+jwt:
+  header: Authorization
+  expirationTime: 86400
+  tokenPrefix: Bearer
+  privateKey: rsa/private-key.pem
+  publicKey: rsa/public-key.pem
+  authoritiesKey: auth
+
+

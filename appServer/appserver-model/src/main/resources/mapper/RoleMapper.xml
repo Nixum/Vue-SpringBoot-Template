@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nixum.model.dao.auth.RoleMapper">
+
+    <resultMap id="RoleMap" type="com.nixum.model.model.auth.Role">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <resultMap id="RoleWithPermissionMap" type="com.nixum.model.model.auth.Role" extends="RoleMap">
+        <!-- 1角色对应多权限 -->
+        <collection property="resourceList" ofType="com.nixum.model.model.base.Resource">
+            <result column="permission_resource" jdbcType="VARCHAR" property="resource"/>
+            <collection property="handleList" ofType="com.alibaba.fastjson.JSONObject">
+                <id column="permission_id" jdbcType="BIGINT" property="id"/>
+                <result column="permission_handle" jdbcType="VARCHAR" property="handle"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="resourceList" type="com.nixum.model.model.base.Resource">
+        <result column="permission_resource" jdbcType="VARCHAR" property="resource"/>
+        <collection property="handleList" ofType="com.alibaba.fastjson.JSONObject">
+            <id column="permission_id" jdbcType="BIGINT" property="id"/>
+            <result column="permission_handle" jdbcType="VARCHAR" property="handle"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="ResourceMap" type="com.nixum.model.model.base.Resource">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <select id="findAllRolePermission" parameterType="java.lang.Long" resultMap="resourceList">
+        SELECT
+        p.resource as permission_resource,
+        p.id as permission_id,
+        p.handle as permission_handle
+        from `role_permission` rp LEFT JOIN `permission` p ON rp.permission_id = p.id
+        WHERE rp.role_id = #{rId}
+    </select>
+
+    <select id="findAllRole" resultMap="RoleWithPermissionMap">
+        SELECT
+        r.id, r.name FROM `role` r
+    </select>
+
+    <select id="findAllRoleWithPermission" resultMap="RoleWithPermissionMap">
+        SELECT
+        r.id, r.name,
+        p.id as permission_id,
+        p.resource as permission_resource,
+        p.handle as permission_handle
+        FROM `role` r
+        LEFT JOIN `role_permission` rp ON r.id = rp.role_id
+        LEFT JOIN `permission` p ON rp.permission_id = p.id
+    </select>
+</mapper>
